@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+    <input type="text" v-model="first"/>
+    <input type="text" v-model="last"/>
+    <p>{{full}}</p>
+    <p v-text="full"></p>
+    <p v-text="full2"></p>
+    <input type="text" v-model="full3"/>
+
+</div>
+
+<script type="text/javascript" src="./vue.js"></script>
+<script type="text/javascript">
+    const vm=new Vue({
+        el:"#app",
+        data:{
+            first:"A",
+            last:"B",
+            full:"A B",
+            full2:"A B"
+        },
+        // watch监视某个属性的改变,被监视的属性后面跟的是一个函数,函数有两个参数
+        // 前是改变后的属性值,后是旧属性值,一般不用的话传一个新的值就可以
+        watch:{
+            first:function (newvalue,oldvalue) {
+                this.full=newvalue+' '+this.last
+            },
+            last: function (newvalue,oldvalue) {
+                this.full=this.first+" "+newvalue
+            }
+        },
+        computed:{
+            // 属性的getter和setter分别用来获取当前某个属性值和监视某个属性值
+            full3:{
+                // 这里的get是full3的get,它用来获取当前的某个属性值,可以是自己的也可以是其他的属性值,但都是当前的
+                // 这里将获取到的值return,也就是说这里full3get到的值就作为了它当前的值
+                //所以说当first或者last改变的时候,就促进了full3获取到的当前值不相同
+                get:function () {
+                    return this.first+" "+this.last
+                },
+                //这里的set是当full3改变的时候,改变后的值传进了参数里
+                set:function (value) {
+                    let change=value.split(" ")
+                    this.first=change[0]
+                    this.last=change[1]
+                }
+
+
+            }
+        }
+    })
+
+    // vue的实例对象的方法都以$开头,下面这个$watch方法就是监视vue属性改变的方法
+    // 方法的用法和上述的watch相同
+    vm.$watch('first' ,(newvalue)=>{
+        vm.full2=newvalue+" "+vm.last
+
+    })
+</script>
+</body>
+</html>

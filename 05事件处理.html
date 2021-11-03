@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="demo">
+    <input />
+    <button @click="test1">111</button>
+    <button @click="test2(222,$event)">event</button>
+<!--    绑定监听-->
+
+<!--    之前也知道事件冒泡这个事,js里面也有阻止事件冒泡的方法,但是使用麻烦而且有时候兼容性还不是很好-->
+<!--    冒泡就是下面这俩div 我点击里面的div 会先触发里面的点击事件,随后还会触发一次外面的事件,-->
+<!--    有时候这种冒泡会造成影响 , 因此需要取消事件的冒泡-->
+<!--    Vue里面的简单做法就是在绑定事件的时候直接.stop即可阻止 , 见代码-->
+    <div @click="test3">
+        <div @click.stop="test4"></div>
+    </div>
+<!--    事件修饰符-->
+
+<!--    某个元素有默认行为 比如点击a元素就会进行跳转链接,而我又想给a绑定一个点击事件-->
+<!--    这个时候需要阻止元素的默认行为 , 否则点击事件和跳转链接就同时执行了-->
+<!--    在Vue里面绑定事件的时候加上.prevent即可阻止默认事件-->
+    <a  href="http://www.baidu.com" @click.preven="test5"></a>
+
+<!--&lt;!&ndash;    按键修饰符&ndash;&gt;-->
+<!--    举个例子， 在input里面想要设置enter按下时的事件 ， 通畅情况下需要绑定键盘按下和判断是哪个按键被按下-->
+<!--    而在Vue里面直接给事件绑定函数的时候就可以指定按键 , -->
+<!--    一般情况下直接.num (num指的是按键的keycode , 比如enter是13)-->
+<!--    有些特殊的按键直接就.按键名即可 ,见代码-->
+    <input type="text" @keyup.13="test7">
+    <input type="text" @keyup.enter="test7">
+</div>
+<script type="text/javascript" src="./vue.js"></script>
+<script type="text/javascript">
+    new Vue({
+        el:"#demo",
+        data:{
+            //每个函数都有一个默认的event表示触发它的详情
+            // 这个参数当函数没有参数或者只有一个参数的时候默认就有的
+            // .target表示触发它的对象
+            test1(event){
+                alert(event.target.innerHTML)
+            },
+            //但是如果函数有两个以上的参数 , 这里就不能手动直接往括号里写event参数了
+            //在调用函数传参数的时候 可以这样表示把event传过去(111,$event)
+            //这个时候在函数参数列表里就可以使用event接收了
+            test2(num,event){
+                alert(event.target.innerHTML)
+            }
+
+        }
+    })
+</script>
+</body>
+</html>

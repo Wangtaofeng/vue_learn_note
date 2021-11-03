@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="test">
+    <span>{{name}}</span>
+    <input type="text" v-model="name">
+</div>
+
+<script type="text/javascript" src="mvvm/compile.js"></script>
+<script type="text/javascript" src="mvvm/mvvm.js"></script>
+<script type="text/javascript" src="mvvm/observer.js"></script>
+<script type="text/javascript" src="mvvm/watcher.js"></script>
+<script>
+    new Mvvm({
+        el: '#test',
+        data: {
+            name: 'sadamu',  // dep0
+            // wife: { // dep1
+            //     name: 'binbin', // dep2
+            //     age: 18 // dep3
+            // }
+        },
+        methods: {
+            update () {
+                this.name = 'avatar'
+            }
+        }
+    })
+
+</script>
+
+</body>
+</html>

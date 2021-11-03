@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="demo">
+    <p>{{msg}}</p>
+    <button @click="die">销毁</button>
+</div>
+<script type="text/javascript" src="./vue.js"></script>
+<script type="text/javascript" >
+    //vue在创建一个实例到这个实例对象死亡这段过程里会执行多个回调函数
+    //这些回调函数都提供了其对应的钩子,所谓钩子给你函数让你可以和它内部的事件挂载
+    //这样我们可以手动设置这些函数的内容,可以在vue创建到死亡的某个过程执行相应程序
+    /*
+    * vue的生命周期
+    * 下面是一些事件的钩子
+    * 1,初始化
+    * beforeCreate() 该函数在new vue时执行,会对这个对象进行初始化配置,加载代码之类
+    * created() 初始化配置完成后执行
+    * beforeMount(),该函数根据el绑定的vue开始生成模板,填写数据等,但还未渲染到页面,即准备工作完成但在渲染前执行
+    * mounted(),渲染完成后执行
+    * 2,监听并更新
+    *beforeUpdate() ,监听数据变化之前执行
+    * (中间有个过程是更新dom,但是不会再执行beforemount和mouted,直接随时更新,因为已经和dom绑定上了)
+    * updated() , 更新完成之后执行
+    * 3,死亡
+    * beforeDestroy(),Vue实例销毁前执行,---这里可以执行一些收尾工作,比如关闭定时器
+    * (虽然vue销毁了,它的数据绑定和渲染也都销毁了,但是如果vue里面开启了定时器 ,会由于内存泄露继续对dom造成影响,需要手动清除)
+    * destroyed(),vue销毁完成后执行
+    *
+    * 常用的
+    * created(),这个时候初始化了对象,可以在页面绑定渲染之前执行函数发送某个请求获取数据
+    * mounted(),
+    * beforeDestroy(),进行收尾 工作
+    *
+    * */
+    new Vue({
+        el:"#demo",
+        data:{
+            msg:1
+        },
+        created(){
+            console.log("对象已加载")
+        },
+        mounted(){
+            //在回调函数里一般设置箭头函数比较好,这样不用考虑一些this问题
+            //比如这里的定时器里面的回调函数,如果使用普通的函数,那么它的this就是定义时的时候的对象,即vm
+            //但是普通函数的this是执行它的对象
+            this.intervalId=setInterval(()=>{
+                this.msg++;
+            },1000)
+        },
+        beforeDestroy(){
+            clearInterval(this.intervalId)
+            console.log("即将销毁vm");
+        },
+        destroyed(){
+            console.log("已经销毁了");
+        },
+        methods:{
+            die(){
+                //vm的$destroy方法即销毁这个vm
+                this.$destroy()
+            }
+        }
+    })
+</script>
+</body>
+</html>

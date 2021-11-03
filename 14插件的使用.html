@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="demo2">
+    <!--    这个指令是vue的内部指令,它可以将绑定的vue属性渲染到使用该指令的元素-->
+    <p v-text="msg"></p>
+    <!--    但是有时候我们不满足于vue内部指令，因此vue允许我们自定义指令-->
+    <!--    比如我这里定义了一个指令v-text-upper(自定义指令需要以v-开头)-->
+    <!--    指令后需要和vue的属性绑定(类比于上面的v-text)-->
+    <p v-my-test="msg"></p>
+
+</div>
+<script type="text/javascript" src="./my_plug.js"></script>
+<script type="text/javascript" src="./vue.js"></script>
+<script type="text/javascript">
+    //引入插件后,在这里就可以使用,插件里定义的一堆看不懂的就是为这里服务的
+    //比如Vue调用插件的install来进行安装插件,并且将Vue传进去作为第一个参数
+    Vue.use(My_plug)
+    //使用插件中定义的Vue函数的全局方法
+    Vue.test_f()
+
+    let vm=new Vue({
+        el:"#demo2",
+        data:{
+            msg:"asdsa"
+            
+        }
+    })
+    //使用插件中给原型对象定义的方法
+    vm.$test_fff()
+
+</script>
+</body>
+</html>

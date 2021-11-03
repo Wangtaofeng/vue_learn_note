@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="" id="_form">
+    <!--之前一直使用这个v-model当时并没有详细知道这个是干嘛的
+    现在需要知道这个是用来绑定表单和Vue属性的,一个表单的v-model和Vue的一个属性绑定后
+    用户输入的信息就自动保存在了Vue对象的那个属性中.随时可以取出来使用
+    虽然没有指定value,但是绑定的那个属性值就成了表单的value(该条及下面几行是适用于输入框),
+    如果初始化指定value,该值是v-model存在的值那么input就会默认成为输入框的值
+    (输入框只能存在一个值,要么是初始化value,要么是v-model,因为它俩去设置的都是value)
+    但是如果不存在的话,那么这个value就和绑定的v-model冲突,此时初始化的value就失效了,默认是Vue里的属性值
+    下面是普通input和username
+    -->
+    <span>账号: </span>
+    <input type="text" value="asc" v-model="username"/>
+    <br>
+
+    <!--
+    v-model和表单的绑定并不仅仅是表单=>vue的单向绑定,而且表单=>vue,vue=>表单的双向绑定
+    知道这点后,就可以来到单选和多选框了,将vue的属性和单选框绑定,这里的和上面的输入框不一样,v-model和初始化value不会冲突
+    他们两个都会去设置表单的某种行为(例如单选的选中)
+    这个时候需要给单选框初始化value值,这个值被选中时vue里对应的属性就有了这个值
+    (如果像上述输入框那样不初始化赋值的话,选中单选框vue对应的属性就会去找选中的单选框的值,结果会找到null)
+    刚刚也说到双向绑定,如果将vue对应的属性设置为某个单选框相同的值,那么这个单选框就默认选中了
+    (属性值设置为对应input时不会触发任何,而且单选框选中的时候会将对应的value赋值给属性,就覆盖了原来的值)
+    -->
+    <span>性别</span>
+    <input id="man" name="sex" value="男" type="radio" v-model="sex"/>
+    <label for="man">男</label>
+    <input id="woman" name="sex" value="女" type="radio" v-model="sex" />
+    <label for="woman">女</label>
+    <!--
+    类似的,对于一个复选框,单选框对应的vue对象的一个属性是一个变量,该变量的值就是被选中input的值
+    而多选框对应的属性应该是一个数组,将复选框里面的值初始化后,vue属性里的数组如果有和绑定的复选框对应的值,那么该复选框就会被选中
+    同样的,复选框被选中的时候就会将其value传到vue对应属性的数组里(不覆盖,在数组后append)
+    -->
+    <span>爱好</span>
+    <input id="a" type="checkbox" name="like" value="a" v-model="likes"/>
+    <label for="a">a</label>
+    <input  id="b" name="like" type="checkbox"  value="b"  v-model="likes" />
+    <label for="b">b</label>
+
+    <!--
+    下面选项select绑定一个属性后,该属性的值就是下拉列表选中的值,如果下拉列表里面存在和这个属性值相等的value
+    那么它的默认行为就是选中这个option
+    同样的,选中后的option里的value就是这个select的值,也就是它所绑定的vue对象里的值
+    -->
+    <select name="" v-model="cityId">
+<!--        这里只是利用value里面的一个对象让option自动生成-->
+        <option value="" >请选择</option>
+        <option :value="city.id" v-for="(city,index) in citys">{{city.name}}</option>
+    </select>
+
+</form>
+<script type="text/javascript" src="./vue.js"></script>
+<script type="text/javascript">
+    new Vue({
+        el:"#_form",
+        data:{
+            username:"111",
+            sex:"",
+            likes:['a','c'],
+            citys:[{id:1,name:"sz"},{id:2,name:"xx"},{id:3,name:"sh"}],
+            cityId:'5'
+        }
+    })
+</script>
+</body>
+</html>

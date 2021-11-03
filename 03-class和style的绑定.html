@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+
+    .class_one{
+        font-size: 30px;
+
+    }
+    .classA{
+        color: red;
+    }
+    .classB{
+        color:blue;
+    }
+
+</style>
+<body>
+<div id="app">
+
+
+<!--    这里可以动态生成class,:class直接是一个值的话,那么这就是字符串的形式,也就是会去vm里面的变量找-->
+<!--    在vm里面要给这个变量赋值一个class名-->
+<!--    这里的动态生成的话,是在原来的class的基础上加上的结果,也就是说,原来就可以设置一个基础的class-->
+
+    <p class="class_one" :class="A">class绑定字符串</p>
+
+<!--    这里通过一个对象的方式来改变元素的class,对象里面的属性名是class名,而值是布尔值-->
+<!--    true代表添加这个class,反之这去除这个class-->
+    <p class="class_one" :class="{classA:isA,classB:isB}">class绑定对象</p>
+    <button @click="change_class">改变绑定</button>
+
+<!--    上述的动态生成class可以使用字符串变量或者对象的形式,但是这里动态生成style只能使用对象的方式来生成-->
+<!--    虽然也可以是:style="obj",但是obj在vm里面必须定义为一个对象-->
+<!--    对象的属性就是style里面的样式名称,属性值就是样式的值,都需要使用js的语法-->
+<!--    比如说fontSize而不是 font-size,值是字符串的形式-->
+    <p class="class_one" :style="{color:color,fontSize:fontsize}">style绑定</p>
+    <button @click="change_style">改变绑定</button>
+
+</div>
+</body>
+<script type="text/javascript" src="./vue.js"></script>
+<script type="text/javascript">
+new  Vue({
+    el:"#app",
+    data:{
+        A:"classA",
+        isA:true,
+        isB:false,
+        //注意这里的style是在js里生成的,所以需要使用js的语法 也就是属性值需要带上引号
+        color:"orange",
+        fontsize:"30px"
+    },
+    methods:{
+        change_class:function () {
+            this.A="classB"
+            this.isA=!this.isA
+            this.isB=!this.isB
+        },
+        change_style:function () {
+            this.color="green"
+            this.fontsize="50px"
+
+        }
+    }
+
+})
+</script>
+</html>

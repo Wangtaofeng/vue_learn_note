@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="app">
+
+<!--    根据条件来渲染,v-if和v-show类似-->
+<!--    但是if不满足条件的直接不解析,而show不满足条件的就只是不显示-->
+<!--    那么使用条件也就清楚了 如果需要频繁切换改变的话,那就用show,因为频繁切换是需要解析好的-->
+<!--    而需要省空间或者时间根据判断只需要一种结果的时候,就需要用到if-->
+    <p v-if="ok">true</p>
+    <p v-else>false</p>
+    <button @click="change">change</button>
+<!--    这里的onclick里面的函数也可以直接省略成下面这种-->
+    <button @click="ok=!ok">change</button>
+    <p v-show="ok">true</p>
+    <p v-show="!ok">false</p>
+</div>
+
+<!--这里的遍历不是像之前的模板渲染用在父元素上,这里直接就用在需要 遍历的元素上-->
+<!--使用:key属性可以保存每次遍历对应的某个属性值,比如index-->
+<!--v-for遍历数组时()里前者是value 后者是index-->
+<!--v-for遍历对象时()里前者是value 后者是key(属性名)-->
+
+<!--Vue里面的数据绑定如果值是对象那么只有绑定元素对应的对象时才会重新渲染-->
+<!--而改变元素对应的对象内部的值 对象没有改变的话,那么不会重新渲染-->
+<!--因此vue里面提供了变异方法(其实主要是对于数组)-->
+<!--这些方法是调用原数组的方法实现改变,随后又加了新的方法实现更新显示-->
+<ul  id="my_data">
+    <li v-for="(items,index) in persons" :key="index">{{index}}---{{items.name}}---{{items.age}}
+
+        <button @click="del(index)">删除</button>
+        <button @click="upd(index,{name:'Jok',age:15})">更新</button>
+        <button @click="add(index,{name:'Jok',age:15})">添加</button>
+    </li>
+</ul>
+<ul id="my_data2">
+    <input v-model="search"/>
+    <li v-for="(items,index) in persons2" :key="index">{{index}}---{{items.name}}---{{items.age}}
+
+    </li>
+        <button @click="my_sort(1)">升序</button>
+        <button @click="my_sort(2)">降序</button>
+        <button @click="my_sort(0)">原本</button>
+
+</ul>
+</body>
+<script type="text/javascript" src="./vue.js"></script>
+<script type="text/javascript">
+new Vue({
+    el:"#app",
+    data:{
+        ok:true
+    },
+
+    methods:{
+        change(){
+            this.ok=!this.ok
+
+        }
+    }
+})
+new Vue({
+    el:"#my_data",
+    data:{
+        persons: [
+            {name: 'Tom', age:18},
+            {name: 'Jack', age:17},
+            {name: 'Bob', age:19},
+            {name: 'Mary', age:16}
+        ]
+    },
+    methods:{
+        del(index){
+            this.persons.splice(index,1)
+        },
+        upd(index,newP){
+            // 如果使用下面这种数组索引的方式去改变的话,会改变对象里的值,但由于变量对应的对象并没有改变
+            // 所以页面不会更新,因此需要像上述说的那样使用变异方法(实际上是重写了原来的方法)
+            // this.persons[index]=newp,
+
+            // 这里变异方法的splice很神奇:
+            // 第一个参数传的是一个索引值,表示从该索引处开始操作
+            // 第二个参数表示个数,操作几个,可以为0
+            // 第三个以后的参数都对应的新的元素值(插入)
+            // 如果删除元素的话,这传两个参数即可(从哪里开始,删除几个)
+            // 更新元素的话,传递三个参数,(开始处,更新几个,对应的新的元素)
+            // 实际上是先删除,随后在对应位置添加上新的元素,达到了更新的效果
+            //同样的可以实现添加,在(索引处开始,删除0个元素,新的元素)就达到了添加的效果
+            //实际上是在索引处操作,,删除了零个元素,后面是在对应位置添加的新的元素
+            this.persons.splice(index,1,newP)
+        },
+
+        add(index,newP){
+            this.persons.splice(index,0,newP)
+        }
+    }
+})
+new Vue({
+    el:"#my_data2",
+    data:{
+        search:"",
+        sortType:0,
+        persons: [
+            {name: 'Tom', age:18},
+            {name: 'Jack', age:17},
+            {name: 'Bob', age:19},
+            {name: 'Mary', age:16}
+        ]
+    },
+    //计算属性里面任意被需要的属性改变都会触发该属性内函数的执行
+    computed:{
+        persons2(){
+            let {search,persons,sortType}=this
+            let arr=persons
+            //filter里面需要传一个函数作为条件,满足该条件的元素会被检索到
+            //需要注意的是,这个函数里面需要传递一个数组参数作为筛选的条件,即在这个参数数组里面进行筛选返回满足条件的数组
+            if(search){
+                arr=persons.filter(function (persons) {
+                    return persons.name.indexOf(search)!==-1
+                })
+            }
+            //数组的方法sort同样需要传一个函数作为参数,该函数需要两个形参
+            //该函数称为比较函数,需要返回一个说明排序依据的结果
+            //具体到实现的时候,传入(a,b) 这里的a,b就代表arr[i]和arr[i+1]
+            //这里为了理解,就把a,b理解成索引值,即 a < b
+            //return a-b就表示返回所有满足前-后为负数的,即升序
+            //return b-a就标书返回所有前-后为正数的,即为降序
+            //如果说比较是a,b对应的属性值,那么参数依旧是a,b 到return的时候就return a.attr < b.attr
+            if(sortType){
+                arr=arr.sort(function (a,b) {
+                    // 这里选择让值为1的时候升序,2的时候降序
+                    if(sortType===1){
+                        return a.age-b.age
+
+                    }else{
+                        return b.age-a.age
+                    }
+                })
+            }
+            return arr
+        }
+
+    },
+
+    methods:{
+        my_sort(num){
+            this.sortType=num
+        }
+    }
+
+})
+</script>
+
+</html>

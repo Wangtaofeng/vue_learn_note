@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .aa{
+        font-size: 25px;
+    }
+    .bb{
+        color: red;
+    }
+</style>
+<body>
+<div id="test">
+    <p>{{name}}</p>
+    <p v-text="name"></p>
+    <p class="aa" v-class="myClass">{{name}}</p>
+    <p v-html="msg"></p>
+    <button v-on:click="show">事件指令</button>
+</div>
+<!--<script type="text/javascript" src="mvvm/mvvm.js"></script>-->
+<!--<script type="text/javascript" src="mvvm/compile.js"></script>-->
+<!--<script type="text/javascript" src="mvvm/observer.js"></script>-->
+<!--<script type="text/javascript" src="mvvm/watcher.js"></script>-->
+<script type="text/javascript" src="mvvm/mvvm2.js"></script>
+<script type="text/javascript" src="mvvm/compile2.js"></script>
+<script>
+    new Mvvm({
+        el: '#test',
+        data: ({
+            name: 'aaa',
+            myClass: 'bb',
+            msg: '<a href="http://www.baidu.com">百度一下</a>'
+        }),
+        methods: {
+            show(){
+                alert("test")
+            }
+        }
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div id="app">
+        <input type="text" v-model="username"/>
+        <p>{{username}}</p>
+<!--        :或者v-bind会进行强制绑定,也就是说,如果是元素的一些属性,比如src之类-->
+<!--        它并不能去直接寻找到Vue里面的表达式,这个时候强制绑定就可以让它的含义变成Vue里面的表达式,会在Vue里面去找-->
+<!--        <img :src='imgUrl'>-->
+<!--        绑定事件监听 v-on:事件名或者@事件名  会监听这个事件 然后Vue里面去找对应的函数-->
+<!--        需要注意的是函数定义的话不是在data数据里面了  而是在methods里面定义
+            同样的,会把里面的内容解析为表达式 就直接传methods名即可 不需要()调用-->
+        <button v-on:click="a"></button>
+
+<!--        计算属性-->
+<!--        在Vue实例的computed里面可以定义Vue属性的计算(data里面的),同样也是一个方法,方法的返回值作为这个属性名的值-->
+        <input type="text" v-model="password"/>
+        <p>{{allinfo}}</p>
+    </div>
+    <script type="text/javascript" src="./vue.js"></script>
+    <script type="text/javascript">
+        new Vue({
+            el:'#app',
+            data:{
+                username:"1",
+                imgUrl:'https://cn.vuejs.org/images/logo.png',
+                password:"2",
+                // allinfo:"3"
+            },
+            methods:{
+                a(){
+                    alert("sss")
+                }
+            },
+            computed:{
+                allinfo(){
+                    return this.username+" "+this.password
+                }
+            }
+        })
+    </script>
+</body>
+</html>

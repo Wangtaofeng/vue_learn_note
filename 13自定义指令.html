@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="demo2">
+<!--    这个指令是vue的内部指令,它可以将绑定的vue属性渲染到使用该指令的元素-->
+    <p v-text="msg"></p>
+<!--    但是有时候我们不满足于vue内部指令，因此vue允许我们自定义指令-->
+<!--    比如我这里定义了一个指令v-text-upper(自定义指令需要以v-开头)-->
+<!--    指令后需要和vue的属性绑定(类比于上面的v-text)-->
+    <p v-text-upper="msg"></p>
+    <p v-lower="msg"></p>
+
+</div>
+<script type="text/javascript" src="./vue.js"></script>
+<script type="text/javascript">
+    //全局自定义指令
+    //这里的字符串就是自定义指令名,在dom里面添加的时候前面要加上v-
+    //除了指令名,还需要传一个函数,该函数需要有两个参数,前者表示使用这个指令的DOM元素
+    //后者包含这个元素绑定的vm属性和一些其他数据的容器
+    //其中value就是对应的属性值
+    Vue.directive("text-upper",(el,bind)=>{
+        console.log(el);
+        console.log(bind);
+        el.innerText=bind.value.toUpperCase()
+    })
+    new Vue({
+        el: "#demo2",
+        data: {
+            msg: "abcdefg"
+        },
+        //类似于上面的全局指令,这里可以在vm内部指定局部属性
+        directives:{
+            lower(el,bind){
+                el.innerText=bind.value.toLowerCase()
+            },
+            //当名称中含有-这种非法字符的时候,可以使用""的方式
+            'text-lower'(el,bind){
+                el.innerText=bind.value.toLowerCase()
+            },
+        }
+    })
+
+</script>
+</body>
+</html>

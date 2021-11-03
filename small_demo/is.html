@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <component :is="show"></component>
+        <button @click = 'change'>点我改变</button>
+        <component is="showStatic"></component>
+    </div>
+    <script>
+        Vue.component('testOne',{
+		template: "<div>我是test1</div>"
+	    })
+        Vue.component('testTwo',{
+		template: "<div>我是test2</div>"
+	    })
+        Vue.component('showStatic',{
+		template: "<div>show_static</div>"
+	    })
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                show: 'testOne'
+            },
+            methods: {
+                change(){
+                    this.show = 'testTwo'
+                }
+            }
+        })
+    </script>
+
+</body>
+
+</html>

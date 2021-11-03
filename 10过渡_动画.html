@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<style>
+    /*这里的动画或者过渡效果只是在动态的时候才会生效,就类似于css里的hover之类*/
+    /*但是在vue里面又加了一些比如v-show v-if可以执行动态的函数也可以触发*/
+
+    /*这种是过渡完成的*/
+    /*这里定义出现和消失的动画时间和需要执行过渡的属性,可以理解为css里面的hover过渡设置*/
+    .test1-enter-active,.test1-leave-active{
+        transition: all 0.5s;
+    }
+    /*.test1-enter-to,.test-leave{*/
+    /*    opacity: 1;*/
+    /*}*/
+    .test1-enter,.test1-leave-to{
+        opacity: 0;
+    }
+    /*
+    这里可能不太好理解,但是结合着vue文档上的图来看就合理许多了
+
+    enter==>enter-to
+     消失__过渡__出现
+    leave==>leave-to
+     出现__过渡__消失
+
+     这里以初始状态为显示为例
+     此时leave是待消失,它的状态是出状态,因此定义它的结束状态leave-to即可
+     而enter-to是显示完成,初始状态就已经显示完成了,因此它的=leave
+     这需要定义它的开始状态enter
+     而enter=leave-to,就是待显示和已结束状态一致
+     leave=enter-to 即待消失和已经显示的状态一致
+
+     这就可以理解上面只定义了enter和leave-to了
+     因为他俩都是待变化后的状态,enter-to,和leave就是初始状态的值
+
+     还是都定义吧 不然感觉总是出现问题......
+     tmd都定义完了一目了然
+
+     *****但是实际上只定义enter=leave-to这一组即可 ,不管初状态怎么样,上面是为了理解,可以理解为只定义这一种另一种就和它反着来就行
+    */
+
+
+
+
+    /*另一种方式就好理解的多了,这一组直接使用的是动画而不是过渡*/
+    /*同样存在则消失和出现的active,定义它俩对应的动画即可*/
+    .test2-enter-active{
+        /*进入执行动画*/
+        animation: my_donghua 0.5s;
+    }
+    .test2-leave-active{
+        /*退出执行动画的reverse(反着来)*/
+        animation: my_donghua 0.5s reverse;
+    }
+    @-webkit-keyframes my_donghua {
+        /*使用transform的scale实现放大宽高,()里是倍数*/
+        /*即一开始是0倍,不显示,放大到1.5倍,膨胀,最后1倍收缩*/
+        0%{
+            transform: scale(0);
+        }
+        50%{
+            transform: scale(1.5);
+        }
+        100%{
+            transform: scale(1);
+        }
+    }
+</style>
+</head>
+<body>
+<div  id="demo">
+    <button @click="show=!show">按钮</button>
+    <transition name="test1">
+        <p v-show="show">hello</p>
+    </transition>
+
+    <transition name="test2">
+        <p v-show="show" style="display: inline-block">hello</p>
+    </transition>
+</div>
+<script type="text/javascript" src="./vue.js"></script>
+<script type="text/javascript">
+    new Vue({
+        el:"#demo",
+        data: {
+            show: true
+        }
+    })
+
+</script>
+</body>
+</html>

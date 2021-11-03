@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="demo">
+    <p>标准:{{time}}</p>
+<!--    这俩是一样的,但是下面这种方式好像不能忍拼接-->
+    <p v-text="time"></p>
+
+    <p>全局格式化:{{time | setTime}}</p>
+    <p>局部格式化:{{time | setTimeLocal}}</p>
+
+</div>
+<script type="text/javascript" src="./vue.js"></script>
+<script type="text/javascript" src="../plug-in/moment.min.js"></script>
+<script type="text/javascript">
+    /*
+    * 关于日期格式化,有一个专门用于格式化日期的库,moment.js,node和浏览器端都能运行
+    * 引入后直接使用moment(待格式化的日期值).format(格式化后的日期格式)
+    * 返回一个你定义的格式的值
+    * */
+
+    /*
+    * 下面说说这个过滤器的用法
+    * 首先这个过滤器的作用是将某个与Dom绑定的值进行过滤后再输出
+    * 当然过滤是你人为指定的
+    * 比如说有时候获取到的值不合法,可以自定义函数过滤掉这些不合法的值
+    * 在双大括号里面,使用|分隔开,前者是需要过滤的值, 后者是过滤器的名称
+    * 除了{{}},在v-bind:这里也可以使用|
+    * 自定义的过滤器需要return一个值作为结果
+    * 过滤器可以使用函数对象Vue.filter来定义,这样式全局的
+    * 而在定义全局过滤器的时候,参数里过滤器的名称需要""起来
+    * 也可以在vm里面定义的话,过滤器名不用"",见下面代码吧
+    * */
+
+    //全局定义过滤器
+    Vue.filter("setTime",(time)=>{
+        return moment(time).format("YYYY-MM-DD")
+    })
+    new Vue({
+        el:"#demo",
+        data:{
+            time:new Date()
+        },
+        mounted(){
+            setInterval(()=>{
+                this.time=new Date()
+            },1000)
+        },
+        //局部过滤器在filters属性里面,就和methods一样
+        // 该属性用来存放过滤器
+        filters:{
+            setTimeLocal:(time)=>{
+                return moment(time).format("HH:mm:ss")
+            }
+        }
+    })
+</script>
+</body>
+</html>

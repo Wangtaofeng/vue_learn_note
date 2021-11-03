@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--
+1. [].slice.call(lis): 将伪数组转换为真数组
+2. node.nodeType: 得到节点类型
+3. Object.defineProperty(obj, propertyName, {}): 给对象添加属性(指定描述符)
+4. Object.keys(obj): 得到对象自身可枚举属性组成的数组
+5. obj.hasOwnProperty(prop): 判断prop是否是obj自身的属性
+6. DocumentFragment: 文档碎片(高效批量更新多个节点)
+-->
+<ul id="test_ul">
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+    <li>4</li>
+</ul>
+<script type="text/javascript">
+    //1. [].slice.call(lis): 将伪数组转换为真数组
+
+    //Array原型里的slice方法可以将数组的指定部分复制到并返回一个一个新的数组
+    //它的实现原理首先是对调用这个方法的数组对象进行遍历,之后复制返回
+    //将一个伪数组对象转化为数组对象可以使用这个方法,但是这个方法是数组才有的,而伪数组并没有这个方法
+    //那么就可以用到call函数了,调用方法的call函数,传进伪数组作为参数,可以让这个伪数组对象暂时拥有并使用这个方法
+    const uls = document.getElementById('test_ul').children
+    console.log(uls)
+    //注意这里让uls拥有slice方法时是.slice而不加(),因为是让它拥有这个方法,通过方法名找到这个方法
+    //如果加了()就是直接调用了
+    //后面的.call()就是先找到这个方法将它赋予obj之后再调用一次
+    const lis = Array.prototype.slice.call(uls)
+    lis.forEach(li => {
+        console.log(li.innerText)
+    })
+
+    // 2. node.nodeType: 得到节点类型
+    //document下面的节点分为很多种,比如说元素节点element,文本节点text,属性节点attr,还有下面会提到的DocumentFragment\
+    //在编写库的时候,很多时候需要判断节点的类型来进行接下来的操作,因此就需要节点的nodetype方法的使用
+    //返回的是类型数字,1代表是元素节点
+    const ul = document.getElementById('test_ul')
+    console.log(ul.nodeType)
+    console.log(ul.firstChild.nodeType)
+    // console.log(ul.nodeType)
+    // 3. Object.defineProperty(obj, propertyName, {}): 给对象添加属性(指定描述符)
+    let obj = {
+        firstName: 'A',
+        lastName: 'C'
+    }
+    //obj下面的defineProperty()方法可以给对象添加属性以及对属性进行配置
+    //该方法有两个参数,对象名,要添加的属性名,对属性的配置{},{}里面填的是描述符
+    //描述分分为三类:属性描述符:对属性本身的一些属性进行配置
+    //数据描述符: 属性值的配置
+    //访问描述符: getter,setter方法定义
+    Object.defineProperty(obj, 'fullName', {
+// 属性描述符
+//configurable参数表示是否可以通过这个方法重新定义该属性,默认为false
+        configurable: false,
+//enumerable表示添加的该属性名是否可以给Obj.keys()枚举出来,默认为false
+//         enumerable: true,
+        enumerable: false,
+// 数据描述符
+//value属性的初始值
+        value: 'AAACCC',
+//writable属性值是否可以被修改,默认为false
+//         writable: false,
+        writable: true
+//get和set在下一个方法里写
+    })
+    console.log(obj.fullName)
+    //验证是否能修改
+    obj.fullName = 'AC'
+    console.log(obj.fullName)
+    //验证是否能枚举到属性
+    let objArray = Object.keys(obj)
+    console.log(objArray)
+    //这里的defineProperty方法是es5才有的,而ie8不支持这个语法,因此Vue支持的ie最低版本到8,vue是以这个方法作为核心的
+    Object.defineProperty(obj, 'full', {
+        //Vue里的计算属性就是这个原理来计算属性值的
+        //这里定义的这个属性,它的值是动态获取下面get里返回的值,里面值是什么,full的值就会动态变化成什么
+        get() {
+            return this.firstName + '-' + this.lastName
+        },
+        //这里的监视是可以监视full属性值的改变,并定义改变后其他属性值的逻辑
+        set(value) {
+            const names = value.split('-')
+            this.firstName = names[0]
+            this.lastName = names[1]
+        }
+    })
+    console.log(obj.full)
+    obj.firstName = 'B'
+    obj.lastName = 'D'
+    console.log(obj.full)
+
+
+    // 6. DocumentFragment: 文档碎片(高效批量更新多个节点)
+    /**
+     * 要说明的是,在更改页面后,浏览器会重新加载页面,即加载整个document,这样会拖慢浏览器的速度
+     * 而文档碎片DocumentFragment也是一种节点类型,但是这个节点是虚拟的,它会保留在内存中,不与界面直接关联
+     * 因此更新DocumentFragment界面不不变
+     * 所以有这样一个想法,就是更新页面的时候,把要更新的元素添加到虚拟节点里
+     * 随后添加到父节点里,这样就不会因页面改变而影响速度等问题
+     *
+     * @type {HTMLElement}
+     */
+    //先获取到界面的父节点
+    const test_ul = document.getElementById('test_ul')
+    //该方法创建一个虚拟节点
+    const fragment = document.createDocumentFragment()
+    //取出父节点的所有节点放到虚拟节点里,注意一定是所有节点,空白和换行算是文本节点,如果不添加的话更改后就与原来不同了
+    //用一个变量来接收父节点下的子节点
+    let children = null
+    while(test_ul.firstChild){
+        //这里类似于链表吧,依次取出父节点的子节点
+        //之所以不需要更改指针到下一个节点,是因为一个节点只能有一个父节点
+        //下面将获取到的子节点添加到了fragment里面,就自动默认从ul里面删除了
+        //否则就拥有了两个父节点了
+        children = test_ul.firstChild
+        fragment.append(children)
+    }
+    //现在将子节点全部取出添加到了fragment之后,ul节点里面为空了
+    //下面对那些子节点进行更新操作
+    let nodes = Array.prototype.slice.call(fragment.childNodes)//这里注意children返回的只有元素子节点,childNodes返回所有子节点,包括文本节点
+    nodes.forEach(node => {
+        if(node.nodeType === 1){
+            node.textContent = 'aaa'
+        }
+    })
+    //这个时候只需要将虚拟节点添加到ul节点里即可完成页面的更新
+    test_ul.append(fragment)
+</script>
+</body>
+</html>

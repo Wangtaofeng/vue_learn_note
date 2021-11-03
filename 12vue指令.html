@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    /*属性选择器语法*/
+    [v-cloak]{
+        display: none;
+    }
+</style>
+<body>
+
+<!--
+常用内置指令
+  v:text : 更新元素的 textContent
+  v-html : 更新元素的 innerHTML
+  v-if : 如果为true, 当前标签才会输出到页面
+  v-else: 如果为false, 当前标签才会输出到页面
+  v-show : 通过控制display样式来控制显示/隐藏
+  v-for : 遍历数组/对象
+  v-on : 绑定事件监听, 一般简写为@
+  v-bind : 强制绑定解析表达式, 可以省略v-bind
+  v-model : 双向数据绑定
+  ref : 为某个元素注册一个唯一标识, vue对象通过$refs属性访问这个元素对象
+  v-cloak : 使用它防止闪现表达式, 与css配合: [v-cloak] { display: none }
+-->
+<div id="demo1">
+    <p ref="other">vm1</p>
+    <button @click="refs_test">refs</button>
+<!--    这个闪现就是页面加载的时候,下面这个标签里是{{data}},而数据是在稍后一会绑定完之后才会被替换-->
+<!--    那么这个替换时间如果因为某些原因变的长了,那么视觉上就能感受到了,-->
+<!--    可以绑定vue元素的dom元素添加一个v-cloak属性,这个属性是在vue执行前存在,执行后就被清除了-->
+<!--    那么我们可以通过css的属性选择器让拥有这个属性的元素一开始就不显示,等到vue加载完,这个属性就清除了,同时数据也来了-->
+<!--    就可以正常显示了-->
+    <p v-cloak>闪现测试{{data}}</p>
+</div>
+<div id="demo2">
+    <p ref="other">qwer</p>
+    <button @click="refs_test">refs</button>
+</div>
+<script type="text/javascript" src="./vue.js"></script>
+<script type="text/javascript" src="../plug-in/moment.min.js"></script>
+<script type="text/javascript">
+    //vm虽然方便将绑定属性值的dom元素进行随时更新渲染,但是如果想访问绑定了其他属性值的dom得通过另外的方法
+    //在以前的js使用中都是通过选择器来获取需要的dom元素,在vue里可以直接通过vm.$refs.ref属性值访问到有着ref属性的元素
+    // 看看例子就行
+    var vm1=new Vue({
+        el:"#demo1",
+        data:{
+            data:11
+        },
+        methods:{
+            refs_test(){
+                alert(this.$refs.other.innerText)
+            },
+        }
+    })
+
+    //这里经过试验证说明了,不同vm之间是可以相互得到它里面的$refs的,
+    //比如我想访问一个元素,它在vm1里面绑定了,那么给它一个ref值,
+    //这样不管在哪里,只要用过vm1.$refs就能找到它里面所有带有ref属性的元素
+    //也就是话,我可以直接通过vm.$refs获取我想要的元素
+    var vm2=new Vue({
+        el:"#demo2",
+        data:{
+
+        },
+        methods:{
+            refs_test(){
+                alert(vm1.$refs.other.innerText)
+            }
+        }
+    })
+
+</script>
+
+</body>
+</html>

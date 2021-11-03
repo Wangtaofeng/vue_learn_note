@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="test"></div>
+<script type="text/javascript" src="mvvm/mvvm.js"></script>
+<script type="text/javascript" src="mvvm/mvvm2.js"></script>
+<script type="text/javascript" src="mvvm/compile.js"></script>
+<script type="text/javascript" src="mvvm/observer.js"></script>
+<script type="text/javascript" src="mvvm/watcher.js"></script>
+<script>
+    /**
+     * 数据代理就是,对对象内部的数据进行代理操作
+     * 即代码上是操作obj.attr,而内部其实是操作了obj.obj2.obj3.attr
+     * 具体可以看自己写的mvvm2里面的代码
+     *
+     *
+     * @type {MVVM}
+     */
+
+    let vm = new MVVM({
+        el: '#test',
+        data: ({
+            name: 'aaa'
+        })
+    })
+    console.log(vm.name)
+    // vm.name = 'bbb'
+    // console.log(vm.name)
+
+    //测试自己写的数据代理
+    let vm2 = new Mvvm({
+        el: "#test",
+        data: ({
+            name: 'ccc'
+        })
+    })
+    console.log(vm2.name)
+    vm2.name = 'ddd'
+    console.log(vm2.name)
+</script>
+</body>
+</html>
